@@ -1,0 +1,7 @@
+{
+  "name": "fw-segment-a11y-issue",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "react"
+}
