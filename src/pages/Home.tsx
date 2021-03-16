@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   IonContent,
   IonHeader,
@@ -12,9 +12,34 @@ import "./Home.css";
 
 const Home: React.FC = () => {
   const [selectedSegment, setSelectedSegment] = useState<string>("customers");
+  const ionSegment = useRef<HTMLIonSegmentElement>(null);
 
-  const handleSegmentSelect = (segment: string) => {
-    setSelectedSegment(segment);
+  const handleSegmentSelect = (e: any) => {
+    setSelectedSegment(e.detail.value!);
+  };
+
+  const handleSegmentClick = (e: any) => {
+    pressedToSelected();
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      pressedToSelected();
+    }, 100);
+  }, [ionSegment.current]);
+
+  const pressedToSelected = () => {
+    if (ionSegment.current) {
+      ionSegment.current
+        .querySelectorAll("ion-segment-button")
+        .forEach((node) => {
+          let button = node.shadowRoot!.querySelector("button")!;
+          button.setAttribute(
+            "aria-selected",
+            button.getAttribute("aria-pressed")!
+          );
+        });
+    }
   };
 
   return (
@@ -31,13 +56,25 @@ const Home: React.FC = () => {
           </IonToolbar>
         </IonHeader>
         <IonSegment
-          onIonChange={(e) => {
-            handleSegmentSelect(e.detail.value!);
-          }}
+          ref={ionSegment}
+          role="tablist"
+          onIonChange={(e) => handleSegmentSelect(e)}
           value={selectedSegment}
         >
-          <IonSegmentButton value="customers">Customers</IonSegmentButton>
-          <IonSegmentButton value="employees">Employees</IonSegmentButton>
+          <IonSegmentButton
+            value="customers"
+            role="tab"
+            onClick={(e) => handleSegmentClick(e)}
+          >
+            Customers
+          </IonSegmentButton>
+          <IonSegmentButton
+            value="employees"
+            role="tab"
+            onClick={(e) => handleSegmentClick(e)}
+          >
+            Employees
+          </IonSegmentButton>
         </IonSegment>
       </IonContent>
     </IonPage>
